@@ -63,7 +63,7 @@ typedef enum
     FNET_ERR = (-1) /**< There is error.*/
 } fnet_return_t;
 
-#if !defined(ARDUINO_TEENSY41)
+#if !defined(ARDUINO_TEENSY41) && !defined(ARDUINO_MIMXRT1060_EVKB)
 /*********************************************************************
  *
  * The basic data types.

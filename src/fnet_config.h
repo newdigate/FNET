@@ -39,7 +39,7 @@
 #endif
 
 #include "port/compiler/fnet_comp_config.h"     /* Default compiler specific configuration. */
-#if defined(ARDUINO_TEENSY41)
+#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_MIMXRT1060_EVKB)
 #define FNET_MIMXRT (1)
 #define FNET_CFG_CPU_MIMXRT1062 (1)
 #include "port/cpu/fnet_cpu_config.h"           /* Default platform configuration. */

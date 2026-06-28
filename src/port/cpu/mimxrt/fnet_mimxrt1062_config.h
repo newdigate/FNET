@@ -43,7 +43,11 @@
 #endif
 
 #ifndef FNET_CFG_CPU_ETH0_PHY_ADDR
-    #define FNET_CFG_CPU_ETH0_PHY_ADDR	(0) /* 0 is used as a broadcast address.*/
+    #if defined(ARDUINO_MIMXRT1060_EVKB)
+        #define FNET_CFG_CPU_ETH0_PHY_ADDR	(2) /* EVKB KSZ8081 strapped to address 2.*/
+    #else
+        #define FNET_CFG_CPU_ETH0_PHY_ADDR	(0) /* 0 is used as a broadcast address.*/
+    #endif
 #endif
 
 /* No flash driver so far.*/

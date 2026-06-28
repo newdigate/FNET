@@ -1,6 +1,6 @@
 #include "fnet.h"
 #include "fnet_user_config.h"
-#if !defined(ARDUINO_TEENSY41)
+#if !defined(ARDUINO_TEENSY41) && !defined(ARDUINO_MIMXRT1060_EVKB)
 
 //#if FNET_USB
 

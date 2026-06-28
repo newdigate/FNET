@@ -82,6 +82,20 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
     //  Serial.printf("GPR1 = %08X\n", IOMUXC_GPR_GPR1);
 
       // configure pins
+#if defined(ARDUINO_MIMXRT1060_EVKB)
+      // EVKB: KSZ8081 reset on AD_B0_09.  The Teensy core routes AD_B0 pads to
+      // the fast GPIO6 bank (GPR26 = 0xFFFFFFFF in startup.c), so drive GPIO6.9.
+      // There is no separate power pin (AD_B0_10 is the PHY interrupt, unused).
+      IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B0_09 = 5; // ALT5 = GPIO
+      GPIO6_GDIR |= (1<<9);
+      GPIO6_DR_CLEAR = (1<<9); // hold PHY in reset
+      // KSZ8081 address (2) is strapped on the EVKB; set the RMII RX pads to
+      // pull-up (per the SDK) rather than driving Teensy DP83825 strap values.
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_04 = RMII_PAD_INPUT_PULLUP;
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_06 = RMII_PAD_INPUT_PULLUP;
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_05 = RMII_PAD_INPUT_PULLUP;
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_11 = RMII_PAD_INPUT_PULLUP;
+#else
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_14 = 5; // Reset   B0_14 Alt5 GPIO7.15
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_15 = 5; // Power   B0_15 Alt5 GPIO7.14
       GPIO7_GDIR |= (1<<14) | (1<<15);
@@ -91,6 +105,7 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_06 = RMII_PAD_INPUT_PULLDOWN; // PhyAdd[1] = 1
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_05 = RMII_PAD_INPUT_PULLUP;   // Master/Slave = slave mode
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_11 = RMII_PAD_INPUT_PULLDOWN; // Auto MDIX Enable
+#endif
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_07 = RMII_PAD_INPUT_PULLUP;
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_08 = RMII_PAD_INPUT_PULLUP;
       IOMUXC_SW_PAD_CTL_PAD_GPIO_B1_09 = RMII_PAD_INPUT_PULLUP;
@@ -103,25 +118,45 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_09 = 3; // TXEN    B1_09 Alt3, pg 529
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_07 = 3; // TXD0    B1_07 Alt3, pg 527
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_08 = 3; // TXD1    B1_08 Alt3, pg 528
+#if defined(ARDUINO_MIMXRT1060_EVKB)
+      // EVKB routes ENET MDC/MDIO to EMC_40/EMC_41 (ALT4), not B1_14/B1_15.
+      IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_41 = 4; // MDIO  EMC_41 Alt4
+      IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_40 = 4; // MDC   EMC_40 Alt4
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_41 = RMII_PAD_INPUT_PULLUP;
+      IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_40 = RMII_PAD_INPUT_PULLUP;
+      IOMUXC_ENET_MDIO_SELECT_INPUT = 1; // GPIO_EMC_41_ALT4
+#else
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_15 = 0; // MDIO    B1_15 Alt0, pg 535
       IOMUXC_SW_MUX_CTL_PAD_GPIO_B1_14 = 0; // MDC     B1_14 Alt0, pg 534
       IOMUXC_ENET_MDIO_SELECT_INPUT = 2; // GPIO_B1_15_ALT0, pg 792
+#endif
       IOMUXC_ENET0_RXDATA_SELECT_INPUT = 1; // GPIO_B1_04_ALT3, pg 792
       IOMUXC_ENET1_RXDATA_SELECT_INPUT = 1; // GPIO_B1_05_ALT3, pg 793
       IOMUXC_ENET_RXEN_SELECT_INPUT = 1; // GPIO_B1_06_ALT3, pg 794
       IOMUXC_ENET_RXERR_SELECT_INPUT = 1; // GPIO_B1_11_ALT3, pg 795
       IOMUXC_ENET_IPG_CLK_RMII_SELECT_INPUT = 1; // GPIO_B1_10_ALT6, pg 791
       delayMicroseconds(2);
+#if defined(ARDUINO_MIMXRT1060_EVKB)
+      GPIO6_DR_SET = (1<<9); // release KSZ8081 reset
+#else
       GPIO7_DR_SET = (1<<14); // start PHY chip
+#endif
       ENET_MSCR = ENET_MSCR_MII_SPEED(9);
       delayMicroseconds(5);
     //  Serial.printf("RCSR:%04X, LEDCR:%04X, PHYCR %04X\n",
     //    mdio_read(0, 0x17), mdio_read(0, 0x18), mdio_read(0, 0x19));
 
-      // LEDCR offset 0x18, set LED_Link_Polarity, pg 62
+#if !defined(ARDUINO_MIMXRT1060_EVKB)
+      // DP83825 (Teensy): LEDCR offset 0x18, set LED_Link_Polarity, pg 62
       _fnet_eth_phy_write(netif, 0x18, 0x0280); // LED shows link status, active high
       // RCSR offset 0x17, set RMII_Clock_Select, pg 61
       _fnet_eth_phy_write(netif, 0x17, 0x0081); // config for 50 MHz clock input
+#else
+      // EVKB KSZ8081: RMII 50 MHz reference-clock mode is strapped on the board
+      // (FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE); the DP83825 RCSR/LEDCR
+      // vendor registers do not apply.  Standard auto-negotiation brings up
+      // the link.
+#endif
 
     //  Serial.printf("RCSR:%04X, LEDCR:%04X, PHYCR %04X\n",
     //    mdio_read(0, 0x17), mdio_read(0, 0x18), mdio_read(0, 0x19));
