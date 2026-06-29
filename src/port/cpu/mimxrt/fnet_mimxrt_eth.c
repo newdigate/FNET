@@ -76,7 +76,17 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
       while (!(CCM_ANALOG_PLL_ENET & CCM_ANALOG_PLL_ENET_LOCK)) ; // wait for PLL lock
       CCM_ANALOG_PLL_ENET_CLR = CCM_ANALOG_PLL_ENET_BYPASS;
     //  Serial.printf("PLL6 = %08X (should be 80202001)\n", CCM_ANALOG_PLL_ENET);
-      // configure REFCLK to be driven as output by PLL6, pg 326
+      // Drive ENET_REF_CLK (B1_10) as an OUTPUT from PLL6 -- set ENET1_TX_CLK_DIR.
+      // This is the same on the EVKB as on the Teensy: the i.MX RT generates the
+      // 50 MHz RMII reference clock and feeds it to the PHY.  The EVKB's
+      // KSZ8081RNB needs that 50 MHz supplied to it (it does not synthesise its
+      // own).  The NXP SDK board boot-clock (clock_config.c) clears this bit as a
+      // default, but the lwip/enet example re-sets it to output in
+      // BOARD_InitHardware() (IOMUXC_EnableMode(..., kIOMUXC_GPR_ENET1TxClkOutputDir,
+      // true)) with CLOCK_InitEnetPll(enableClkOutput=true) -- so the final state
+      // is TX_CLK_DIR = 1.  Clearing it starves the PHY of its reference clock:
+      // MDIO still works (it is clocked by MDC), but the link never comes up and
+      // auto-negotiation never completes.
       CLRSET(IOMUXC_GPR_GPR1, IOMUXC_GPR_GPR1_ENET1_CLK_SEL | IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN,
         IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR);
     //  Serial.printf("GPR1 = %08X\n", IOMUXC_GPR_GPR1);
@@ -152,10 +162,12 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
       // RCSR offset 0x17, set RMII_Clock_Select, pg 61
       _fnet_eth_phy_write(netif, 0x17, 0x0081); // config for 50 MHz clock input
 #else
-      // EVKB KSZ8081: RMII 50 MHz reference-clock mode is strapped on the board
-      // (FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE); the DP83825 RCSR/LEDCR
-      // vendor registers do not apply.  Standard auto-negotiation brings up
-      // the link.
+      // EVKB KSZ8081RNB: the 50 MHz RMII reference-clock mode (PHY Control 2
+      // reg 0x1F bit 7, REFCLK_SELECT) is selected in fnet_mimxrt_eth_phy_init()
+      // below -- NOT here.  The generic _fnet_eth_phy_init() issues a PHY soft
+      // reset (which reloads the KSZ8081 config straps and would wipe the bit)
+      // and only then calls the board phy-init hook, so the bit must be set from
+      // that hook to survive.  (The DP83825 RCSR/LEDCR registers do not apply.)
 #endif
 
     //  Serial.printf("RCSR:%04X, LEDCR:%04X, PHYCR %04X\n",
@@ -177,11 +189,43 @@ static fnet_return_t fnet_mimxrt_eth_init(fnet_netif_t *netif)
 static fnet_return_t fnet_mimxrt_eth_phy_init(fnet_netif_t *netif)
 {
 #if FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062
-  
+#if defined(ARDUINO_MIMXRT1060_EVKB)
+    /* EVKB on-board KSZ8081RNB: select 50 MHz RMII reference-clock mode, exactly
+       as the NXP SDK does for this board (it builds the KSZ8081 driver with
+       -DFSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE): set PHY Control 2 (reg 0x1F)
+       bit 7 (REFCLK_SELECT).  Without it the KSZ8081 stays in 25 MHz mode and the
+       link never comes up, even though the MAC drives 50 MHz on ENET_REF_CLK.
+
+       This MUST be done here, in the board phy-init hook: the generic
+       _fnet_eth_phy_init() that calls us has just issued a PHY soft reset (which
+       reloads the KSZ8081 config straps and clears this bit) and will restart
+       auto-negotiation immediately after we return -- so setting REFCLK_SELECT
+       here is both late enough to survive the reset and early enough to take
+       effect before auto-negotiation.  (Doing it in eth_cpu_init runs before that
+       soft reset and gets wiped.) */
+    fnet_uint16_t ctl2 = 0;
+    _fnet_eth_phy_read(netif, 0x1F, &ctl2);
+    _fnet_eth_phy_write(netif, 0x1F, (fnet_uint16_t)(ctl2 | 0x0080u)); /* REFCLK_SELECT = 50 MHz */
+
+    /* Advertise the full 10/100 ability set before auto-negotiation restarts.
+       The EVKB KSZ8081's reset/strap default only advertises 10 Mbps (ANAR reads
+       0x8061), so the link comes up at 10BASE-T -- which the FEC, fixed at 100M
+       (RMII_10T not set), cannot talk to.  The NXP SDK's PHY_KSZ8081_Init writes
+       this same advertisement (reg 0x04 = 0x01E1) for exactly this reason; the
+       generic _fnet_eth_phy_init() restarts auto-negotiation right after we
+       return, so the new advertisement takes effect and the link comes up at
+       100BASE-TX full-duplex to match the MAC. */
+    _fnet_eth_phy_write(netif, FNET_ETH_MII_REG_ANAR,
+                        (fnet_uint16_t)(FNET_ETH_MII_REG_ANAR_100_FULLDUPLEX |
+                                        FNET_ETH_MII_REG_ANAR_100_HALFDUPLEX |
+                                        FNET_ETH_MII_REG_ANAR_10_FULLDUPLEX  |
+                                        FNET_ETH_MII_REG_ANAR_10_HALFDUPLEX  |
+                                        FNET_ETH_MII_REG_ANAR_IEEE8023));
+#endif /* ARDUINO_MIMXRT1060_EVKB */
 #endif /* (FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062) & KSZ8081RNB PHY */
 
     return FNET_OK;
-    
+
 }
 
 /* If vector table is in ROM, pre-install FNET ISR for ENET Receive Frame interrupt*/
