@@ -127,7 +127,12 @@
     *  NOTE: User application should not change this parameter.
     ******************************************************************************/
     #ifndef FNET_CFG_CPU_ETH0_VECTOR_NUMBER
-        #define FNET_CFG_CPU_ETH0_VECTOR_NUMBER        (16+114/*irq*/)
+        #if FNET_CFG_CPU_MIMXRT1176
+            /* RT1176 10/100 ENET IRQ = 137. */
+            #define FNET_CFG_CPU_ETH0_VECTOR_NUMBER    (16+137/*irq*/)
+        #else
+            #define FNET_CFG_CPU_ETH0_VECTOR_NUMBER    (16+114/*irq*/)
+        #endif
     #endif
 
     /*****************************************************************************

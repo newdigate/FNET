@@ -286,7 +286,12 @@ typedef struct FNET_MIMXRT_PIT_MemMap
 /*********************************************************************
 * Fast Ethernet Controller (FEC)
 *********************************************************************/
-#define FNET_FEC0_BASE_ADDR                             (0x402D8000u)
+#if FNET_CFG_CPU_MIMXRT1176
+    /* RT1176 10/100 ENET (ENET_1G/ENET_QOS are separate IPs, not targeted). */
+    #define FNET_FEC0_BASE_ADDR                         (0x40424000u)
+#else
+    #define FNET_FEC0_BASE_ADDR                         (0x402D8000u)
+#endif
 
 
 #if defined(__cplusplus)

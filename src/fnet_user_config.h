@@ -63,7 +63,7 @@ typedef enum
     FNET_ERR = (-1) /**< There is error.*/
 } fnet_return_t;
 
-#if !defined(ARDUINO_TEENSY41) && !defined(ARDUINO_MIMXRT1060_EVKB)
+#if !defined(ARDUINO_TEENSY41) && !defined(ARDUINO_MIMXRT1060_EVKB) && !defined(__IMXRT1176__)
 /*********************************************************************
  *
  * The basic data types.
@@ -440,6 +440,11 @@ fnet_return_t fnet_cpu_serial_init(fnet_index_t port_number, fnet_uint32_t baud_
  *               - @b @c 0 = is disabled (Default value).
  * @showinitializer
  ******************************************************************************/
+/* MIMXRT1176 (RT1170-EVKB) build: mbedTLS is not compiled — TLS off. */
+#if defined(__IMXRT1176__)
+    #define FNET_CFG_TLS                (0)
+#endif
+
 #ifndef FNET_CFG_TLS
     #define FNET_CFG_TLS                (2)
 #endif

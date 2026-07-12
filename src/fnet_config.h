@@ -43,6 +43,11 @@
 #define FNET_MIMXRT (1)
 #define FNET_CFG_CPU_MIMXRT1062 (1)
 #include "port/cpu/fnet_cpu_config.h"           /* Default platform configuration. */
+#elif defined(__IMXRT1176__)
+/* i.MX RT1176 (NXP MIMXRT1170-EVKB) — 10/100 ENET + RTL8201. */
+#define FNET_MIMXRT (1)
+#define FNET_CFG_CPU_MIMXRT1176 (1)
+#include "port/cpu/fnet_cpu_config.h"           /* Default platform configuration. */
 #endif
 
 #include "stack/fnet_stack_config.h"            /* Default TCP/IP stack configuration. */

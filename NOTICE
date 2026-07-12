@@ -1,0 +1,13 @@
+FNET TCP/IP stack — NOTICE
+
+This product includes software developed as part of the FNET project
+(Copyright 2005-2018 by Andrey Butok and the FNET Community), licensed
+under the Apache License, Version 2.0 (see fnet_license.txt).
+
+Modifications in this fork:
+- 2026: i.MX RT1176 (NXP MIMXRT1170-EVKB) CPU target — FNET_CFG_CPU_MIMXRT1176
+  (config plumbing, 10/100 ENET base/IRQ, RTL8201 PHY, board bring-up hooks
+  transplanted from the HW-verified rt1170/evkb enet.c driver).
+  Copyright 2026 Nicholas Newdigate, licensed under the Apache License 2.0.
+- Earlier fork history: Teensy 4.1 / MIMXRT1060-EVKB Arduino packaging
+  (vjmuzik/newdigate).

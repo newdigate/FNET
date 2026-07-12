@@ -23,7 +23,7 @@
 ***************************************************************************/
 #include "fnet.h"
 
-#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_MIMXRT1060_EVKB)
+#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_MIMXRT1060_EVKB) || defined(__IMXRT1176__)
 
 #if (FNET_CFG_CPU_TIMER_NUMBER<0u)||(FNET_CFG_CPU_TIMER_NUMBER>FNET_CFG_CPU_TIMER_NUMBER_MAX)
     #error "FNET_CFG_CPU_TIMER_NUMBER must be from 0 to FNET_CFG_CPU_TIMER_NUMBER_MAX."

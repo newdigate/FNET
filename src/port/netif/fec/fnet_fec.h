@@ -71,7 +71,14 @@
 #endif
 
 #if FNET_MIMXRT     /* i.MX-RT*/
-    #define FNET_FEC_CLOCK_KHZ  FNET_CPU_CLOCK_KHZ
+    #if FNET_CFG_CPU_MIMXRT1176
+        /* The MDC divider is clocked by the ENET module (bus) clock, not the
+           CM7 core clock: RT1176 bus root = 240 MHz -> MII_SPEED 47
+           (MDC = 2.5 MHz), matching the HW-verified milestone-1 value. */
+        #define FNET_FEC_CLOCK_KHZ  (240000U)
+    #else
+        #define FNET_FEC_CLOCK_KHZ  FNET_CPU_CLOCK_KHZ
+    #endif
 
     /* This pointer must be 64-bit aligned (bits 2–0 must be zero); however, for
     optimal performance the pointer should be 512-bit aligned, that is, evenly divisible by 64.*/
@@ -191,7 +198,7 @@ typedef struct
     volatile fnet_uint8_t  reserved0[4100];    /*Reserved 4100 bytes (Base+0x0000-0x0103)*/
 #endif
 #endif
-#if FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062
+#if FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062 || FNET_CFG_CPU_MIMXRT1176
     volatile fnet_uint32_t reserved0;
 #endif
     volatile fnet_uint32_t EIR;                /* Interrupt even reg. */

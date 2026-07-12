@@ -29,7 +29,7 @@
 #include "fnet_config.h"
 #include "port/compiler/fnet_comp.h"
 
-#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_MIMXRT1060_EVKB)
+#if defined(ARDUINO_TEENSY41) || defined(ARDUINO_MIMXRT1060_EVKB) || defined(__IMXRT1176__)
 #include "port/cpu/fnet_cpu.h"
 #endif
 

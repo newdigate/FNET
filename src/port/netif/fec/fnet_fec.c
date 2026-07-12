@@ -372,7 +372,7 @@ static fnet_return_t _fnet_fec_init(fnet_netif_t *netif)
 #elif FNET_CFG_CPU_S32R274
             //fec_if->reg_phy->MSCR = FNET_FEC_MSCR_MII_SPEED((FNET_FEC_CLOCK_KHZ/FNET_FEC_MII_CLOCK_KHZ) - 1U) & ~1U;
             fec_if->reg_phy->MSCR = 0x16; //TBD make it result of calculation
-#elif FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062
+#elif FNET_CFG_CPU_MIMXRT1052 || FNET_CFG_CPU_MIMXRT1062 || FNET_CFG_CPU_MIMXRT1176
             /* User manual:    <MAC clock frequency> / ((<MSCR [MII_SPEED]> + 1) x 2) = <MDC frequency (2.5 MHz)> */
             fec_if->reg_phy->MSCR = FNET_FEC_MSCR_MII_SPEED((FNET_FEC_CLOCK_KHZ / (2 * FNET_ETH_MII_CLOCK_KHZ)) - 1U);
 #else  /* FNET_CFG_CPU_MPC5744P || FNET_CFG_CPU_MCF54418 || FNET_CFG_CPU_MK60N512 || FNET_CFG_CPU_MK60DN512 || FNET_CFG_CPU_MK64FN1 || FNET_CFG_CPU_MK66FN2 || FNET_CFG_CPU_MK70FN1 || FNET_CFG_CPU_MK60FN1 */

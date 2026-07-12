@@ -126,6 +126,9 @@
 #ifndef FNET_CFG_CPU_MIMXRT1062
     #define FNET_CFG_CPU_MIMXRT1062 (0)
 #endif
+#ifndef FNET_CFG_CPU_MIMXRT1176
+    #define FNET_CFG_CPU_MIMXRT1176 (0)
+#endif
 
 /*********** MFC ********************/
 #if FNET_CFG_CPU_MCF52235 /* Kirin2 */
@@ -316,6 +319,15 @@
 
     #include "port/cpu/mimxrt/fnet_mimxrt1062_config.h"
     #define FNET_CPU_STR    "MIMXRT1062"
+#endif
+
+#if FNET_CFG_CPU_MIMXRT1176
+    #ifdef FNET_CPU_STR
+        #error "More than one CPU selected FNET_CFG_CPU_XXXX"
+    #endif
+
+    #include "port/cpu/mimxrt/fnet_mimxrt1176_config.h"
+    #define FNET_CPU_STR    "MIMXRT1176"
 #endif
 
 

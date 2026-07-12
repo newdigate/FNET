@@ -29,15 +29,20 @@
 #include "fnet.h"
 #include "fnet_mimxrt_serial.h"
 #include <Arduino.h>
+#include <HardwareSerial.h>
 
 Stream* Serials[] = {&Serial,
                      &Serial1,
+#if !defined(__IMXRT1176__)
+                     /* Trimmed RT1176 (RT1170-EVKB) core only exposes Serial
+                        (USB CDC) and Serial1 (LPUART1 VCOM console) so far. */
                      &Serial2,
                      &Serial3,
                      &Serial4,
                      &Serial5,
                      &Serial6,
                      &Serial7,
+#endif
 #if defined(ARDUINO_TEENSY41)
                      &Serial8,
 #endif
