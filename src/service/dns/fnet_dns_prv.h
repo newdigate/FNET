@@ -73,7 +73,7 @@ typedef struct
     fnet_uint16_t qdcount FNET_COMP_PACKED;    /* Count of questions, specifying the number of entries in the question section.*/
     fnet_uint16_t ancount FNET_COMP_PACKED;    /* Count of answers, specifying the number of resource records in the answer section.*/
     fnet_uint16_t nscount FNET_COMP_PACKED;    /* Authority Record Count, specifying the number of name
-                                                * server resource records in the authority records section. (“NS” - “name server”).*/
+                                                * server resource records in the authority records section. (Â“NSÂ” - Â“name serverÂ”).*/
     fnet_uint16_t arcount FNET_COMP_PACKED;    /* Count of additional, specifying the number of
                                                 * resource records in the additional records section.*/
 

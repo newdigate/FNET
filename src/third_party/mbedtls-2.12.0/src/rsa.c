@@ -31,7 +31,7 @@
  *      Menezes, van Oorschot and Vanstone
  *
  *  [3] Malware Guard Extension: Using SGX to Conceal Cache Attacks
- *      Michael Schwarz, Samuel Weiser, Daniel Gruss, Clémentine Maurice and
+ *      Michael Schwarz, Samuel Weiser, Daniel Gruss, ClÃ©mentine Maurice and
  *      Stefan Mangard
  *      https://arxiv.org/abs/1702.08719v2
  *
@@ -529,7 +529,7 @@ MBEDTLSFLASHMEM int mbedtls_rsa_gen_key( mbedtls_rsa_context *ctx,
         MBEDTLS_MPI_CHK( mbedtls_mpi_gen_prime( &ctx->Q, nbits >> 1, 0,
                                                 f_rng, p_rng ) );
 
-        /* make sure the difference between p and q is not too small (FIPS 186-4 §B.3.3 step 5.4) */
+        /* make sure the difference between p and q is not too small (FIPS 186-4 Â§B.3.3 step 5.4) */
         MBEDTLS_MPI_CHK( mbedtls_mpi_sub_mpi( &H, &ctx->P, &ctx->Q ) );
         if( mbedtls_mpi_bitlen( &H ) <= ( ( nbits >= 200 ) ? ( ( nbits >> 1 ) - 99 ) : 0 ) )
             continue;
@@ -543,17 +543,17 @@ MBEDTLSFLASHMEM int mbedtls_rsa_gen_key( mbedtls_rsa_context *ctx,
         MBEDTLS_MPI_CHK( mbedtls_mpi_sub_int( &ctx->Q, &ctx->Q, 1 ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_mul_mpi( &H, &ctx->P, &ctx->Q ) );
 
-        /* check GCD( E, (P-1)*(Q-1) ) == 1 (FIPS 186-4 §B.3.1 criterion 2(a)) */
+        /* check GCD( E, (P-1)*(Q-1) ) == 1 (FIPS 186-4 Â§B.3.1 criterion 2(a)) */
         MBEDTLS_MPI_CHK( mbedtls_mpi_gcd( &G, &ctx->E, &H  ) );
         if( mbedtls_mpi_cmp_int( &G, 1 ) != 0 )
             continue;
 
-        /* compute smallest possible D = E^-1 mod LCM(P-1, Q-1) (FIPS 186-4 §B.3.1 criterion 3(b)) */
+        /* compute smallest possible D = E^-1 mod LCM(P-1, Q-1) (FIPS 186-4 Â§B.3.1 criterion 3(b)) */
         MBEDTLS_MPI_CHK( mbedtls_mpi_gcd( &G, &ctx->P, &ctx->Q ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_div_mpi( &L, NULL, &H, &G ) );
         MBEDTLS_MPI_CHK( mbedtls_mpi_inv_mod( &ctx->D, &ctx->E, &L ) );
 
-        if( mbedtls_mpi_bitlen( &ctx->D ) <= ( ( nbits + 1 ) / 2 ) ) // (FIPS 186-4 §B.3.1 criterion 3(a))
+        if( mbedtls_mpi_bitlen( &ctx->D ) <= ( ( nbits + 1 ) / 2 ) ) // (FIPS 186-4 Â§B.3.1 criterion 3(a))
             continue;
 
         break;

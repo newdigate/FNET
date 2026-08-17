@@ -612,7 +612,7 @@ void _fnet_eth_output_ip6(fnet_netif_t *netif, const fnet_ip6_addr_t *src_ip_add
         neighbor = _fnet_nd6_neighbor_cache_get(netif, dest_ip_addr);
 
         /* RFC4861 7.2.2: When a node has a unicast packet to send to a neighbor, but does not
-         * know the neighbor’s link-layer address, it performs address resolution.
+         * know the neighborÂ’s link-layer address, it performs address resolution.
          * For multicast-capable interfaces, this entails creating a
          * Neighbor Cache entry in the INCOMPLETE state and transmitting a
          * Neighbor Solicitation message targeted at the neighbor. The

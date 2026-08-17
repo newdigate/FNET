@@ -363,8 +363,8 @@ static fnet_ip6_ext_header_handler_result_t _fnet_ip6_ext_header_handler_options
                         exit_flag = FNET_TRUE;
                         break;
                     /* 10 - discard the packet and, regardless of whether or not the
-                     *      packet’s Destination Address was a multicast address, send an
-                     *      ICMP Parameter Problem, Code 2, message to the packet’s
+                     *      packetÂ’s Destination Address was a multicast address, send an
+                     *      ICMP Parameter Problem, Code 2, message to the packetÂ’s
                      *      Source Address, pointing to the unrecognized Option Type.*/
                     case FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD_ICMP:
                         _fnet_netbuf_free_chain(nb);
@@ -373,9 +373,9 @@ static fnet_ip6_ext_header_handler_result_t _fnet_ip6_ext_header_handler_options
 
                         exit_flag = FNET_TRUE;
                         break;
-                    /* 11 - discard the packet and, only if the packet’s Destination
+                    /* 11 - discard the packet and, only if the packetÂ’s Destination
                      *      Address was not a multicast address, send an ICMP Parameter
-                     *      Problem, Code 2, message to the packet’s Source Address,
+                     *      Problem, Code 2, message to the packetÂ’s Source Address,
                      *      pointing to the unrecognized Option Type.*/
                     case FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD_UICMP:
                         _fnet_netbuf_free_chain(nb);
@@ -430,7 +430,7 @@ static fnet_ip6_ext_header_handler_result_t _fnet_ip6_ext_header_handler_routing
     * of the node depends on the value of the Segments Left field, as
     * follows:
     * -If Segments Left is non-zero, the node must discard the packet and
-    *  send an ICMP Parameter Problem, Code 0, message to the packet’s
+    *  send an ICMP Parameter Problem, Code 0, message to the packetÂ’s
     *  Source Address, pointing to the unrecognized Routing Type.
     */
     if( routing_h->segments_left > 0u)
@@ -1581,7 +1581,7 @@ static fnet_netbuf_t *_fnet_ip6_reassembly(fnet_netif_t *netif, fnet_netbuf_t **
         /* Fragments (except the last) must be multiples of 8 bytes */
         if ((total_length & 0x07u) != 0u)
         {
-            /* If the length of a fragment, as derived from the fragment packet’s
+            /* If the length of a fragment, as derived from the fragment packetÂ’s
              * Payload Length field, is not a multiple of 8 octets and the M flag
              * of that fragment is 1, then that fragment must be discarded and an
              * ICMP Parameter Problem, Code 0, message should be sent to the

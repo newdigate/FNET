@@ -62,8 +62,8 @@
 * referenced.
 */
 /* RFC:
-* Since the NVT is what is left when no options are enabled, the DON’T and
-* WON’T responses are guaranteed to leave the connection in a state
+* Since the NVT is what is left when no options are enabled, the DONÂ’T and
+* WONÂ’T responses are guaranteed to leave the connection in a state
 * which both ends can handle. Thus, all hosts may implement their
 * TELNET processes to be totally unaware of options that are not
 * supported, simply returning a rejection to (i.e., refusing) any

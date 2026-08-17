@@ -144,7 +144,7 @@ typedef struct fnet_netif_ip6_prefix
  ******************************************************************************/
 typedef struct fnet_netif_ip6_neighbor_cache
 {
-    fnet_ip6_addr_t         ip_addr;        /**< @brief Neighbor’s on-link unicast IP address. */
+    fnet_ip6_addr_t         ip_addr;        /**< @brief NeighborÂ’s on-link unicast IP address. */
     fnet_netif_ll_addr_t    ll_addr;        /**< @brief Its link-layer address. Actual size is defiined by ll_addr_size. */
     fnet_size_t             ll_addr_size;   /**< @brief Size of link-layer address.*/
     fnet_bool_t             is_router;      /**< @brief A flag indicating whether the neighbor is a router (FNET_TRUE) or a host (FNET_FALSE).*/

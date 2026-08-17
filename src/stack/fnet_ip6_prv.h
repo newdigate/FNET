@@ -153,10 +153,10 @@ FNET_COMP_PACKED_END
  * Hop-by-Hop Options Header & Destination Options Header
  *
  * The Hop-by-Hop Options header is used to carry optional information
- * that must be examined by every node along a packet’s delivery path.
+ * that must be examined by every node along a packetÂ’s delivery path.
  *
  * The Destination Options header is used to carry optional information
- * that need be examined only by a packet’s destination node(s).
+ * that need be examined only by a packetÂ’s destination node(s).
  ***********************************************************************
  * RFC 2460 4.3/4.6:
  *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -227,19 +227,19 @@ FNET_COMP_PACKED_END
 #define FNET_IP6_OPTION_TYPE_UNRECOGNIZED_SKIP          (0x00u)  /* 00 - skip over this option and continue processing the header.*/
 #define FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD       (0x40u)  /* 01 - discard the packet. */
 #define FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD_ICMP  (0x80u)  /* 10 - discard the packet and, regardless of whether or not the
-                                                                 * packet’s Destination Address was a multicast address, send an
-                                                                 * ICMP Parameter Problem, Code 2, message to the packet’s
+                                                                 * packetÂ’s Destination Address was a multicast address, send an
+                                                                 * ICMP Parameter Problem, Code 2, message to the packetÂ’s
                                                                  * Source Address, pointing to the unrecognized Option Type.*/
-#define FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD_UICMP (0xC0u)  /* 11 - discard the packet and, only if the packet’s Destination
+#define FNET_IP6_OPTION_TYPE_UNRECOGNIZED_DISCARD_UICMP (0xC0u)  /* 11 - discard the packet and, only if the packetÂ’s Destination
                                                                  * Address was not a multicast address, send an ICMP Parameter
-                                                                 * Problem, Code 2, message to the packet’s Source Address,
+                                                                 * Problem, Code 2, message to the packetÂ’s Source Address,
                                                                  * pointing to the unrecognized Option Type.*/
 
 /***********************************************************************
  * Routing Header
  *
  * The Routing header is used by an IPv6 source to list one or more
- * intermediate nodes to be "visited" on the way to a packet’s
+ * intermediate nodes to be "visited" on the way to a packetÂ’s
  * destination.
  ***********************************************************************
  * RFC 2460 4.4:
