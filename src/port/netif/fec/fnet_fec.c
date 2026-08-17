@@ -747,7 +747,7 @@ void fnet_fec_output(fnet_netif_t *netif, fnet_netbuf_t *nb)
 #ifdef FNET_FEC_TEST_RACE_CONDITION
         {
             fnet_index_t i;
-            for (i = 0u; i < 10000u; i++) {}   /* tempo 20µs */
+            for (i = 0u; i < 10000u; i++) {}   /* tempo 20Âµs */
         }
 #endif
 

@@ -80,7 +80,7 @@
         #define FNET_FEC_CLOCK_KHZ  FNET_CPU_CLOCK_KHZ
     #endif
 
-    /* This pointer must be 64-bit aligned (bits 2–0 must be zero); however, for
+    /* This pointer must be 64-bit aligned (bits 2â€“0 must be zero); however, for
     optimal performance the pointer should be 512-bit aligned, that is, evenly divisible by 64.*/
     #define FNET_FEC_BUF_DESC_DIV       (64U)
     /* For optimal performance, make the transmit buffer pointer evenly
@@ -111,7 +111,7 @@
         /* Phanter's and Viper's ENET runs quarter of core max frequency = 200MHz/4 = 50MHz */
         #define FNET_FEC_CLOCK_KHZ  (FNET_CPU_CLOCK_KHZ/4)
         /* Transmit buffer descriptor queue. This pointer
-        * must be 64-bit aligned (bits 2–0 must be zero);
+        * must be 64-bit aligned (bits 2â€“0 must be zero);
         * however, it is recommended to be 128-bit aligned,
         * that is, evenly divisible by 16.*/
         #define FNET_FEC_BUF_DESC_DIV       (16U)
