@@ -64,7 +64,7 @@ typedef struct
     fnet_uint8_t      max_resp_time FNET_COMP_PACKED;  /* IGMPv1 Unused field, zeroed when sent, ignored when received.*/
     /* IGMPv2 Max Response Time (is meaningful only in Membership Query).*/
     /* NOTE: Current version of FNET ignores this parameter.*/
-    fnet_uint16_t     checksum FNET_COMP_PACKED;       /* The checksum is the 16-bit ones complement of the ones
+    fnet_uint16_t     checksum FNET_COMP_PACKED;       /* The checksum is the 16-bit one’s complement of the one’s
                                                       * complement sum of the 8-octet IGMP message.*/
     fnet_ip4_addr_t group_addr FNET_COMP_PACKED;     /* Group address field.*/
 } fnet_igmp_header_t;

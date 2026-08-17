@@ -157,7 +157,7 @@ typedef struct fnet_nd6_prefix_entry
 } fnet_nd6_prefix_entry_t;
 
 /**************************************************************
-* Neighbors reachability states, based on RFC4861.
+* Neighbor’s reachability states, based on RFC4861.
 **************************************************************/
 typedef enum fnet_nd6_neighbor_state
 {
@@ -186,9 +186,9 @@ typedef enum fnet_nd6_neighbor_state
 typedef struct fnet_nd6_neighbor_entry
 {
 
-    fnet_ip6_addr_t             ip_addr;        /* Neighbors on-link unicast IP address. */
+    fnet_ip6_addr_t             ip_addr;        /* Neighbor’s on-link unicast IP address. */
     fnet_netif_ll_addr_t        ll_addr;        /* Its link-layer address. Actual size is defiined by fnet_netif_api_t->netif_hw_addr_size. */
-    fnet_nd6_neighbor_state_t   state;          /* Neighbors reachability state.*/
+    fnet_nd6_neighbor_state_t   state;          /* Neighbor’s reachability state.*/
     fnet_time_t                 state_time_ms;  /* Time of last state event.*/
     fnet_netbuf_t               *waiting_netbuf;/* Pointer to any queued packetwaiting for address resolution to complete.*/
     /* RFC 4861 7.2.2: While waiting for address resolution to complete, the sender MUST,
@@ -225,7 +225,7 @@ typedef struct fnet_nd6_redirect_entry
                                              * MUST contain the same value as the ICMP Destination
                                              * Address field. Otherwise, the target is a better
                                              * first-hop router and the Target Address MUST be the
-                                             * routers link-local address so that hosts can
+                                             * router’s link-local address so that hosts can
                                              * uniquely identify routers. */
     fnet_time_t         creation_time_sec;  /* Time of entry creation.*/
 } fnet_nd6_redirect_entry_t;
@@ -435,7 +435,7 @@ typedef struct fnet_nd6_ra_header
                                                                 * Lifetime of 0 indicates that the router is not a
                                                                 * default router and SHOULD NOT appear on the default
                                                                 * router list. The Router Lifetime applies only to
-                                                                * the routers usefulness as a default router; it
+                                                                * the router’s usefulness as a default router; it
                                                                 * does not apply to information contained in other
                                                                 * message fields or options. Options that need time
                                                                 * limits for their information include their own

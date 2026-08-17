@@ -47,7 +47,7 @@
                                                         (preferably 0xffffffff) as the IP destination address and the link-
                                                         layer broadcast address as the link-layer destination address.*/
 
-#define FNET_DHCP_HTYPE_ETHERNET            (1U)       /* Hardware address type, see ARP section in "Assigned Numbers" RFC; e.g., 1 = 10mb ethernet..*/
+#define FNET_DHCP_HTYPE_ETHERNET            (1U)       /* Hardware address type, see ARP section in "Assigned Numbers" RFC; e.g., ’1’ = 10mb ethernet..*/
 
 
 /************************************************************************

@@ -326,7 +326,7 @@ static void _fnet_nd6_neighbor_cache_timer(fnet_netif_t *netif)
             case FNET_ND6_NEIGHBOR_STATE_REACHABLE:
                 /*
                  * RFC 4861: When ReachableTime milliseconds have passed since receipt of the last
-                 * reachability confirmation for a neighbor, the Neighbor Cache entrys
+                 * reachability confirmation for a neighbor, the Neighbor Cache entry’s
                  * state changes from REACHABLE to STALE.
                  */
                 if((fnet_timer_get_ms() - neighbor_entry->state_time_ms) > nd6_if->reachable_time_ms )
@@ -339,7 +339,7 @@ static void _fnet_nd6_neighbor_cache_timer(fnet_netif_t *netif)
             case FNET_ND6_NEIGHBOR_STATE_DELAY:
                 /*
                 * If the entry is still in the DELAY state when the timer expires,
-                * the entrys state changes to PROBE.
+                * the entry’s state changes to PROBE.
                 */
                 if((fnet_timer_get_ms() - neighbor_entry->state_time_ms) > FNET_ND6_DELAY_FIRST_PROBE_TIME_MS )
                     /* DELAY to PROBE */
@@ -460,7 +460,7 @@ static void _fnet_nd6_router_list_add( fnet_nd6_neighbor_entry_t *neighbor_entry
             neighbor_entry->creation_time_sec = fnet_timer_get_ms() / FNET_TIMER_MS_IN_SEC;
         }
         else
-            /* If the address is already present in the hosts Default Router
+            /* If the address is already present in the host’s Default Router
              * List and the received Router Lifetime value is zero, immediately
              * time-out the entry.
              */
@@ -1017,7 +1017,7 @@ void _fnet_nd6_neighbor_solicitation_receive(struct fnet_netif *netif, fnet_ip6_
                     /* If an entry already exists, and the
                      * cached link-layer address differs from the one in the received Source
                      * Link-Layer option, the cached address should be replaced by the
-                     * received address, and the entrys reachability state MUST be set to
+                     * received address, and the entry’s reachability state MUST be set to
                      * STALE.
                      * If a Neighbor Cache entry already exists, its
                      * IsRouter flag MUST NOT be modified.
@@ -1315,7 +1315,7 @@ void _fnet_nd6_neighbor_advertisement_receive(struct fnet_netif *netif, fnet_ip6
          * Handle NA message.
          ************************************************************/
 
-        /* RFC4861 7.2.5: Neighbor Cache is searched for the targets entry.
+        /* RFC4861 7.2.5: Neighbor Cache is searched for the target’s entry.
          */
         neighbor_cache_entry = _fnet_nd6_neighbor_cache_get(netif, &na_packet->target_addr);
         if(neighbor_cache_entry == FNET_NULL)
@@ -1325,7 +1325,7 @@ void _fnet_nd6_neighbor_advertisement_receive(struct fnet_netif *netif, fnet_ip6
             goto DROP;
         }
 
-        /* If the targets Neighbor Cache entry is in the INCOMPLETE state.*/
+        /* If the target’s Neighbor Cache entry is in the INCOMPLETE state.*/
         if(neighbor_cache_entry->state == FNET_ND6_NEIGHBOR_STATE_INCOMPLETE)
         {
             /* If the link layer has addresses and no Target Link-Layer Address option is
@@ -1341,7 +1341,7 @@ void _fnet_nd6_neighbor_advertisement_receive(struct fnet_netif *netif, fnet_ip6
              */
             FNET_NETIF_LL_ADDR_COPY(nd_option_tlla->addr, neighbor_cache_entry->ll_addr, netif->netif_api->netif_hw_addr_size);
 
-            /* - If the advertisements Solicited flag is set, the state of the
+            /* - If the advertisement’s Solicited flag is set, the state of the
              *   entry is set to REACHABLE; otherwise, it is set to STALE.
              */
             if (is_solicited)
@@ -1367,7 +1367,7 @@ void _fnet_nd6_neighbor_advertisement_receive(struct fnet_netif *netif, fnet_ip6
         }
         else
         {
-            /* If the targets Neighbor Cache entry is in any state other than
+            /* If the target’s Neighbor Cache entry is in any state other than
              * INCOMPLETE.
              */
             if( nd_option_tlla )
@@ -1424,7 +1424,7 @@ void _fnet_nd6_neighbor_advertisement_receive(struct fnet_netif *netif, fnet_ip6
                 }
                 /* If the Solicited flag is zero and the linklayer
                  *   address was updated with a different address, the state
-                 *   MUST be set to STALE. Otherwise, the entrys state remains
+                 *   MUST be set to STALE. Otherwise, the entry’s state remains
                  *   unchanged.
                  */
                 else if(is_ll_addr_changed)
@@ -1591,7 +1591,7 @@ void _fnet_nd6_router_advertisement_receive(struct fnet_netif *netif, fnet_ip6_a
             netif->nd6_if_ptr->retrans_timer_ms = fnet_ntohl(ra_packet->retrans_timer_ms);
         }
 
-        /* RFC4861: Hosts SHOULD copy the options value
+        /* RFC4861: Hosts SHOULD copy the option’s value
          * into LinkMTU so long as the value is greater than or equal to the
          * minimum link MTU [IPv6] and does not exceed the maximum LinkMTU value
          * specified in the link-type-specific document.
@@ -1656,11 +1656,11 @@ void _fnet_nd6_router_advertisement_receive(struct fnet_netif *netif, fnet_ip6_a
             }
         }
 
-        /* RFC4861: If the address is already present in the hosts Default Router
+        /* RFC4861: If the address is already present in the host’s Default Router
          * List as a result of a previously received advertisement, reset
          * its invalidation timer to the Router Lifetime value in the newly
          * received advertisement.
-         * If the address is already present in the hosts Default Router
+         * If the address is already present in the host’s Default Router
          * List and the received Router Lifetime value is zero, immediately
          * time-out the entry.*/
         _fnet_nd6_router_list_add( neighbor_cache_entry, (fnet_time_t)fnet_ntohs(ra_packet->router_lifetime_sec));
@@ -1699,7 +1699,7 @@ void _fnet_nd6_router_advertisement_receive(struct fnet_netif *netif, fnet_ip6_a
                         prefix_entry = _fnet_nd6_prefix_list_get(netif, &nd_option_prefix[i]->prefix);
 
                         /* RFC4861: If the prefix is not already present in the Prefix List, and the
-                         * Prefix Information options Valid Lifetime field is non-zero,
+                         * Prefix Information option’s Valid Lifetime field is non-zero,
                          * create a new entry for the prefix and initialize its
                          * invalidation timer to the Valid Lifetime value in the Prefix
                          * Information option.*/
@@ -1715,7 +1715,7 @@ void _fnet_nd6_router_advertisement_receive(struct fnet_netif *netif, fnet_ip6_a
                         }
                         else
                         {
-                            /* RFC4861: If the prefix is already present in the hosts Prefix List as
+                            /* RFC4861: If the prefix is already present in the host’s Prefix List as
                              * the result of a previously received advertisement, reset its
                              * invalidation timer to the Valid Lifetime value in the Prefix
                              * Information option. If the new Lifetime value is zero, time-out
@@ -1925,7 +1925,7 @@ void _fnet_nd6_redirect_receive(struct fnet_netif *netif, fnet_ip6_addr_t *src_i
                 neighbor_cache_entry->state = FNET_ND6_NEIGHBOR_STATE_STALE;
             }
             /* else. If the link-layer address is the
-             * same as that already in the cache, the cache entrys state remains
+             * same as that already in the cache, the cache entry’s state remains
              * unchanged. */
         }
 

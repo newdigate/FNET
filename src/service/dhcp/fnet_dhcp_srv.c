@@ -114,7 +114,7 @@ typedef struct
     fnet_dhcp_srv_addr_pool_state_t     state;                  /* Address state */
     fnet_time_t                         state_timestamp_ms;     /* The timestamp.*/
     fnet_time_t                         lease_time;             /* Lease time.*/
-    fnet_mac_addr_t                     client_identifier;      /* Client-identifier. The combination of client identifier or chaddr and assigned network address constitute a unique identifier for the clients lease*/
+    fnet_mac_addr_t                     client_identifier;      /* Client-identifier. The combination of ’client identifier’ or ’chaddr’ and assigned network address constitute a unique identifier for the client’s lease*/
 } fnet_dhcp_srv_addr_pool_t;
 
 /************************************************************************
@@ -420,8 +420,8 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
 
         /* === Parse RX options ===*/
         fnet_memset_zero(&options_rx, sizeof(options_rx));                        /* Clear options_rx.*/
-        /* The options in the options field
-        MUST be interpreted first, so that any option overload options may
+        /* The options in the ’options’ field
+        MUST be interpreted first, so that any ’option overload’ options may
         be interpreted.*/
         _fnet_dhcp_srv_parse_options(dhcp_header->options, size - (sizeof(fnet_dhcp_header_t) - FNET_DHCP_OPTIONS_LENGTH), &options_rx);
 
@@ -466,9 +466,9 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
             Client broadcast to locate available servers.*/
             case FNET_DHCP_OPTION_MSG_TYPE_DISCOVER:
                 /* Field check */
-                if(dhcp_header->ciaddr == INADDR_ANY)   /* ciaddr 0 (DHCPDISCOVER)*/
+                if(dhcp_header->ciaddr == INADDR_ANY)   /* ’ciaddr’ 0 (DHCPDISCOVER)*/
                 {
-                    /* Allocate a new address from the servers pool of available addresses. */
+                    /* Allocate a new address from the server’s pool of available addresses. */
                     if(addr_pool_index == FNET_ERR)
                     {
                         addr_pool_index = _fnet_dhcp_srv_get_addr_pool_free(dhcp_srv_if);
@@ -483,7 +483,7 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
 
                         /* While not required for correct operation of DHCP, the server SHOULD
                         NOT reuse the selected network address before the client responds to
-                        the servers DHCPOFFER message. The server may choose to record the
+                        the server’s DHCPOFFER message. The server may choose to record the
                         address as offered to the client.*/
                         if(ip_addr_pool->state == FNET_DHCP_SRV_ADDR_POOL_STATE_FREE)
                         {
@@ -507,17 +507,17 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
                     /* Must be allocated/offered by us */
                     if(ip_addr_pool->state != FNET_DHCP_SRV_ADDR_POOL_STATE_FREE)
                     {
-                        /* If the DHCPREQUEST message contains a server
-                        identifier option, the message is in response to a DHCPOFFER
+                        /* If the DHCPREQUEST message contains a ’server
+                        identifier’ option, the message is in response to a DHCPOFFER
                         message.
                         MUST (after MUST SELECTING)
                         MUST NOT (after INIT-REBOOT, BOUND, RENEWING or REBINDING)*/
                         if(options_rx.server_identifier)
                         {
-                            /* Client inserts the address of the selected server in server identifier.
+                            /* Client inserts the address of the selected server in ’server identifier’.
                             MUST (after MUST SELECTING)*/
                             if((server_identifier == options_rx.server_identifier) &&
-                               (dhcp_header->ciaddr == INADDR_ANY) ) /*ciaddr MUST be zero */
+                               (dhcp_header->ciaddr == INADDR_ANY) ) /*’ciaddr’ MUST be zero */
                             {
                                 /* Mark as bound */
                                 ip_addr_pool->state = FNET_DHCP_SRV_ADDR_POOL_STATE_BOUND;
@@ -545,7 +545,7 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
                     server SHOULD respond with a DHCPNAK message.*/
                     if(options_rx.server_identifier)
                     {
-                        /* Client inserts the address of the selected server in server identifier*/
+                        /* Client inserts the address of the selected server in ’server identifier’*/
                         if(server_identifier == options_rx.server_identifier)
                         {
                             /* Send DHCPNAK */
@@ -579,7 +579,7 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
             case FNET_DHCP_OPTION_MSG_TYPE_RELEASE:
                 /* RFC: Upon receipt of a DHCPRELEASE message, the server marks the network
                 address as not allocated. The server SHOULD retain a record of the
-                clients initialization parameters for possible reuse in response to
+                client’s initialization parameters for possible reuse in response to
                 subsequent requests from the client.*/
                 if(addr_pool_index != FNET_ERR)
                 {
@@ -594,16 +594,16 @@ static void _fnet_dhcp_srv_poll( void *fnet_dhcp_srv_if_p )
                 break;
             case FNET_DHCP_OPTION_MSG_TYPE_INFORM:
                 /* RFC: The server responds to a DHCPINFORM message by sending a DHCPACK
-                message directly to the address given in the ciaddr field of the
+                message directly to the address given in the ’ciaddr’ field of the
                 DHCPINFORM message. The server MUST NOT send a lease expiration time
-                to the client and SHOULD NOT fill in yiaddr.*/
+                to the client and SHOULD NOT fill in ’yiaddr’.*/
                 /* Send ACK */
                 if(dhcp_header->ciaddr != INADDR_ANY)
                 {
                     /* DHCPACK message with any local
                     configuration parameters appropriate for the client without:
                     allocating a new address, checking for an existing binding, filling
-                    in yiaddr or including lease time parameters.*/
+                    in ’yiaddr’ or including lease time parameters.*/
                     addr_pool_index = FNET_ERR;
                     message_type_tx = FNET_DHCP_OPTION_MSG_TYPE_ACK;
                 }
@@ -640,32 +640,32 @@ static void _fnet_dhcp_srv_send_message(fnet_dhcp_srv_if_t *dhcp_if, fnet_ip4_ad
     fnet_uint16_t           port_number = FNET_CFG_DHCP_CLN_PORT;
 
     /* == Common reply message parameters == */
-    message->op = FNET_DHCP_OP_BOOTREPLY;       /* op BOOTREPLY */
+    message->op = FNET_DHCP_OP_BOOTREPLY;       /* ’op’ BOOTREPLY */
     message->htype = FNET_DHCP_HTYPE_ETHERNET;  /* Ethernet */
     message->hlen = sizeof(fnet_mac_addr_t);    /* Hardware address length in octets */
     message->hops = 0;
-    /* Use xid from client message */
+    /* Use ’xid’ from client message */
     message->secs = 0;
     message->siaddr = INADDR_ANY;   /* IP address of next bootstrap server - NOT supported.*/
-    /* flags from client DHCPDISCOVER/DHCPREQUEST message */
-    /* giaddr from client DHCPDISCOVER/DHCPREQUEST message */
-    /* chaddr from client DHCPDISCOVER/DHCPREQUEST message*/
+    /* ’flags’ from client DHCPDISCOVER/DHCPREQUEST message */
+    /* ’giaddr’ from client DHCPDISCOVER/DHCPREQUEST message */
+    /* ’chaddr’ from client DHCPDISCOVER/DHCPREQUEST message*/
     fnet_memset_zero(message->sname, sizeof(message->sname));       /* Clear 'sname' options.*/
     fnet_memset_zero(message->file, sizeof(message->file));         /* Clear 'file' options.*/
     fnet_memcpy(message->magic_cookie, fnet_dhcp_magic_cookie, sizeof(fnet_dhcp_magic_cookie));  /* Add "magic cookie" */
     fnet_memset_zero(message->options, sizeof(message->options));   /* Clear 'options' options.*/
 
-    /* If the giaddr field in a DHCP message from a client is non-zero,
-    the server sends any return messages to the DHCP server port on the
-    BOOTP relay agent whose address appears in giaddr. If the giaddr
-    field is zero and the ciaddr field is nonzero, then the server
-    unicasts DHCPOFFER and DHCPACK messages to the address in ciaddr.
-    If giaddr is zero and ciaddr is zero, and the broadcast bit is
+    /* If the ’giaddr’ field in a DHCP message from a client is non-zero,
+    the server sends any return messages to the ’DHCP server’ port on the
+    BOOTP relay agent whose address appears in ’giaddr’. If the ’giaddr’
+    field is zero and the ’ciaddr’ field is nonzero, then the server
+    unicasts DHCPOFFER and DHCPACK messages to the address in ’ciaddr’.
+    If ’giaddr’ is zero and ’ciaddr’ is zero, and the broadcast bit is
     set, then the server broadcasts DHCPOFFER and DHCPACK messages to
-    0xffffffff. If the broadcast bit is not set and giaddr is zero and
-    ciaddr is zero, then the server unicasts DHCPOFFER and DHCPACK
-    messages to the clients hardware address and yiaddr address. In
-    all cases, when giaddr is zero, the server broadcasts any DHCPNAK
+    0xffffffff. If the broadcast bit is not set and ’giaddr’ is zero and
+    ’ciaddr’ is zero, then the server unicasts DHCPOFFER and DHCPACK
+    messages to the client’s hardware address and ’yiaddr’ address. In
+    all cases, when ’giaddr’ is zero, the server broadcasts any DHCPNAK
     messages to 0xffffffff.*/
     /* TBD sending to HW address */
     if(message->giaddr != INADDR_ANY)
@@ -692,7 +692,7 @@ static void _fnet_dhcp_srv_send_message(fnet_dhcp_srv_if_t *dhcp_if, fnet_ip4_ad
         goto EXIT;
     }
 
-    /* Add server identifier. A DHCP server always returns its own address in the server identifier option.*/
+    /* Add server identifier. A DHCP server always returns its own address in the ’server identifier’ option.*/
     option_position = _fnet_dhcp_srv_add_option(option_position, ((message->options + sizeof(message->options)) - option_position), FNET_DHCP_OPTION_SERVER_ID, FNET_DHCP_OPTION_SERVER_ID_LENGTH,  &server_identifier);
     if(option_position == FNET_NULL)
     {
@@ -711,7 +711,7 @@ static void _fnet_dhcp_srv_send_message(fnet_dhcp_srv_if_t *dhcp_if, fnet_ip4_ad
             }
             break;
         case FNET_DHCP_OPTION_MSG_TYPE_ACK:
-            /* ciaddr from DHCPREQUEST */
+            /* ’ciaddr’ from DHCPREQUEST */
             if(addr_pool_index != FNET_ERR)
             {
                 message->yiaddr = fnet_htonl(fnet_ntohl(dhcp_if->ip_addr_pool_start) + addr_pool_index); /* IP address assigned to client*/
@@ -1057,10 +1057,10 @@ static fnet_int32_t _fnet_dhcp_srv_get_addr_pool(fnet_dhcp_srv_if_t *dhcp_srv_if
     fnet_dhcp_srv_addr_pool_t   *ip_addr_pool = FNET_NULL;
 
     /*RFC: If an address is available, the new address SHOULD be chosen as follows:
-    o The clients current address as recorded in the clients current
+    o The client’s current address as recorded in the client’s current
     binding, ELSE
-    o The clients previous address as recorded in the clients (now
-    expired or released) binding, if that address is in the servers
+    o The client’s previous address as recorded in the client’s (now
+    expired or released) binding, if that address is in the server’s
     pool of available addresses and not already allocated, ELSE*/
     for(i = 0; i < dhcp_srv_if->ip_addr_pool_size; i++)
     {
@@ -1084,7 +1084,7 @@ static fnet_int32_t _fnet_dhcp_srv_get_addr_pool(fnet_dhcp_srv_if_t *dhcp_srv_if
             if(i < dhcp_srv_if->ip_addr_pool_size)
             {
                 ip_addr_pool = &dhcp_srv_if->ip_addr_pool[i];
-                /* o The address requested in the Requested IP Address option, if that
+                /* o The address requested in the ’Requested IP Address’ option, if that
                 address is valid and not already allocated, ELSE*/
                 if(ip_addr_pool->state == FNET_DHCP_SRV_ADDR_POOL_STATE_FREE)
                 {
@@ -1109,7 +1109,7 @@ static fnet_int32_t _fnet_dhcp_srv_get_addr_pool_free(fnet_dhcp_srv_if_t *dhcp_s
     fnet_index_t                i;
     fnet_dhcp_srv_addr_pool_t   *ip_addr_pool;
 
-    /* A new address allocated from the servers pool of available addresses. */
+    /* A new address allocated from the server’s pool of available addresses. */
     for(i = 0; i < dhcp_srv_if->ip_addr_pool_size; i++)
     {
         ip_addr_pool = &dhcp_srv_if->ip_addr_pool[i];
